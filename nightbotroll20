@@ -1,0 +1,63 @@
+// The !roll or !r command
+// Version: 0.3.1
+// =======================
+
+// The first and last line are just for the Nightbot command, they aren't JavaScript
+
+// vvv Copy from BELOW this line vvv
+
+$(user) rolled: $(eval
+    var inp = "$(1)";
+    function roll(r){for(var a=r.split(/[d+-]/),t=Math.min(a[0].length>0?Number.parseInt(a[0],10):1,1e3),e=Number.parseInt(a[1],10),n=a.length>2?Number.parseInt(a[2],10):0,o=n=-1!==r.indexOf("-")?-n:n,h=[],l=0;l<t;++l){var f=Math.floor(Math.random()*Math.floor(e)+1);o+=f,h.push(f)}var i=`${o}`;return t<30&&t>1&&(i+=` [${h}]`),0!=n&&(i+=` (modified: ${o-n}${n<0?"-":"+"}${Math.abs(n)})`),i}
+    roll(inp);
+)
+
+// ^^^ To ABOVE this line, paste this into the Command 'Message' field in Nightbot ^^^
+
+
+
+// For checking the distribution of dice rolls
+// ===========================================
+
+// NOTE - This is just for development, copy the Nightbot command above if you
+//   just want the !roll dice roller command
+
+// An easy way to test this out is to run the code in a web browser's dev console
+
+// Run this first:
+function roll(inp) {
+  var spl = inp.split(/[d+-]/);
+  var dCount = Math.min(spl[0].length > 0 ? Number.parseInt(spl[0], 10) : 1, 1000);
+  var dSize = Number.parseInt(spl[1], 10);
+
+  // modify the result from the roll
+  var mod = spl.length > 2 ? Number.parseInt(spl[2], 10) : 0;
+  mod = inp.indexOf('-') !== -1 ? -mod : mod;
+
+  var res = mod;
+  var ress = [];
+  for (var i=0; i < dCount; ++i) {
+      var roll = Math.floor((Math.random() * Math.floor(dSize)) + 1);
+      res += roll;
+      ress.push(roll);
+  }
+  var rString = `${res}`;
+  if (dCount < 30 && dCount > 1) rString += ` [${ress}]`;
+  if (mod != 0) rString += ` (modified: ${res - mod}${mod < 0 ? '-' : '+'}${Math.abs(mod)})`;
+  return rString;
+}
+
+// Then run this:
+var diceSize = 20;
+var iterCount = 1000000;
+var rollResults = []
+for (var fillIter = 1; fillIter <= diceSize; ++fillIter) {
+  rollResults[fillIter] = 0;
+}
+for (var i = 0; i < iterCount; ++i) {
+  var rollResult = roll("1d"+diceSize);
+  rollResults[Number.parseInt(rollResult)] += 1;
+}
+for (var logIter = 1; logIter <= diceSize; ++logIter) {
+  console.log(logIter + " " + rollResults[logIter] + ",");
+}
